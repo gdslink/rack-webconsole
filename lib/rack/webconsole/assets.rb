@@ -34,10 +34,12 @@ module Rack
         # Expose the request object to the Repl
         Webconsole::Repl.request = Rack::Request.new(env)
 
-        # Inject the html, css and js code to the view
-        response_body.gsub!('</body>', "#{code(env)}</body>")
+        if env['warden'].user.try(:is_root?)
+          # Inject the html, css and js code to the view
+          response_body.gsub!('</body>', "#{code(env)}</body>")
 
-        headers['Content-Length'] = response_body.bytesize.to_s
+          headers['Content-Length'] = response_body.bytesize.to_s
+        end
 
         [status, headers, [response_body]]
       end
