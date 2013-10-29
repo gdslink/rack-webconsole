@@ -73,7 +73,7 @@ module Rack
     #
     # @param [Hash] env a Rack request environment.
     def call(env)
-      if env['PATH_INFO'] == '/webconsole'
+      if env['PATH_INFO'] == '/webconsole' and env['warden'].user.try(:is_root?)
         Repl.new(@app).call(env)
       else
         Assets.new(@app).call(env)
